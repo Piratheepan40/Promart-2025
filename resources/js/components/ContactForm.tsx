@@ -9,7 +9,6 @@ import {
 import { useForm } from '@inertiajs/react';
 
 export default function ContactForm() {
-  // Respect reduced motion
   const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -20,7 +19,6 @@ export default function ContactForm() {
     return () => mq.removeEventListener?.('change', setPref);
   }, []);
 
-  // Tilt state (±7°)
   const xLeft = useMotionValue(0);
   const yLeft = useMotionValue(0);
   const rotateXLeft = useTransform(yLeft, [-50, 50], [7, -7]);
@@ -31,7 +29,6 @@ export default function ContactForm() {
   const rotateXRight = useTransform(yRight, [-50, 50], [7, -7]);
   const rotateYRight = useTransform(xRight, [-50, 50], [-7, 7]);
 
-  // ✅ Generic handlers (HTMLElement) so they work for both motion.div and motion.form
   const handleMouse =
     (xMv: MotionValue<number>, yMv: MotionValue<number>) =>
     (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -41,14 +38,13 @@ export default function ContactForm() {
       yMv.set(e.clientY - rect.top - rect.height / 2);
     };
 
+  // ✅ Removed unused `_e` parameter
   const handleLeave =
-    (xMv: MotionValue<number>, yMv: MotionValue<number>) =>
-    (_e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    (xMv: MotionValue<number>, yMv: MotionValue<number>) => () => {
       xMv.set(0);
       yMv.set(0);
     };
 
-  // Inertia form
   const { data, setData, post, processing, reset } = useForm({
     firstName: '',
     lastName: '',
@@ -56,12 +52,12 @@ export default function ContactForm() {
     phone: '',
     projectLocation: '',
     message: '',
-    company: '', // honeypot
+    company: '',
   });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (data.company) return; // bot caught
+    if (data.company) return;
     post('/contact', {
       preserveScroll: true,
       onSuccess: () => reset(),
@@ -71,7 +67,6 @@ export default function ContactForm() {
   return (
     <section className="w-full bg-gradient-to-b from-[#f0f6ff] to-[#e4efff] py-16">
       <div className="max-w-6xl mx-auto px-6 md:px-12">
-        {/* Title */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800">
             Contact <span className="text-blue-600">Us</span>
@@ -82,7 +77,7 @@ export default function ContactForm() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-10 items-start">
-          {/* Left: Info + Map */}
+          {/* Left side */}
           <motion.div
             onMouseMove={handleMouse(xLeft, yLeft)}
             onMouseLeave={handleLeave(xLeft, yLeft)}
@@ -130,7 +125,6 @@ export default function ContactForm() {
               </div>
             </div>
 
-            {/* Map */}
             <div className="w-full rounded-xl overflow-hidden shadow-lg mt-6">
               <iframe
                 title="Company Location"
@@ -154,7 +148,7 @@ export default function ContactForm() {
             </a>
           </motion.div>
 
-          {/* Right: Form */}
+          {/* Right side */}
           <motion.form
             onMouseMove={handleMouse(xRight, yRight)}
             onMouseLeave={handleLeave(xRight, yRight)}
@@ -168,7 +162,6 @@ export default function ContactForm() {
           >
             <h4 className="text-lg font-semibold text-gray-800 mb-4">Send us a Message</h4>
 
-            {/* Honeypot */}
             <input
               type="text"
               name="company"
