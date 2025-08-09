@@ -42,6 +42,7 @@ const Header: React.FC = () => {
           src="/promart logo.png"
           alt="ProMart Logo"
           style={{ height: 65, objectFit: "contain" }}
+          draggable={false}
         />
       </Box>
 
@@ -113,25 +114,28 @@ const Header: React.FC = () => {
             minHeight: 90,
           }}
         >
-          {/* Logo */}
+          {/* Logo with smooth zoom on hover */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Link href="/">
-              <img
-                src="/promart logo.png"
-                alt="ProMart Logo"
-                style={{
-                  height: 70,
+            <Box
+              component={Link}
+              href="/"
+              aria-label="Go to homepage"
+              sx={{
+                display: "inline-block",
+                "& img": {
+                  height: 90,
                   objectFit: "contain",
+                  userSelect: "none",
+                  cursor: "pointer",
                   transition: "transform 0.3s ease",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              />
-            </Link>
+                },
+                "&:hover img": {
+                  transform: "scale(1.1)",
+                },
+              }}
+            >
+              <img src="/promart logo.png" alt="ProMart Logo" draggable={false} />
+            </Box>
           </Box>
 
           {/* Desktop Nav */}
@@ -206,6 +210,7 @@ const Header: React.FC = () => {
             edge="start"
             sx={{ display: { md: "none" } }}
             onClick={handleDrawerToggle}
+            aria-label="Open menu"
           >
             <MenuIcon />
           </IconButton>
