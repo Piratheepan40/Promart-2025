@@ -31,20 +31,20 @@ const bounceArrowVariants: Variants = {
 };
 
 export default function Hero() {
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<Record<string, unknown> | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetch('/construction.json')
       .then((res) => res.json())
-      .then(setAnimationData)
+      .then((data: Record<string, unknown>) => setAnimationData(data))
       .catch((err) => console.error('Failed to load animation JSON:', err));
   }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1; // -1 to 1
-      const y = (e.clientY / window.innerHeight) * 2 - 1; // -1 to 1
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
       setMousePos({ x, y });
     };
 
@@ -52,7 +52,6 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Translate amounts for parallax layers
   const bgTranslateX = mousePos.x * 10;
   const bgTranslateY = mousePos.y * 10;
   const textTranslateX = mousePos.x * 20;
@@ -264,7 +263,12 @@ export default function Hero() {
         >
           {animationData ? (
             <AnimatedLottieWrapper>
-              <Lottie animationData={animationData} loop autoplay style={{ width: '100%', height: '100%' }} />
+              <Lottie
+                animationData={animationData as object}
+                loop
+                autoplay
+                style={{ width: '100%', height: '100%' }}
+              />
             </AnimatedLottieWrapper>
           ) : (
             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', mt: 8 }}>
